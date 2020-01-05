@@ -5,28 +5,22 @@ import chart_studio.plotly as py
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import requests
+import json
+import time
 
+st.markdown(
+    """# Data Science Project
 
+This app displays a water quality monitoring and property report in the Twin Cities Metro Area alongside a machine learning model that produces predictions on the future sale value of properties in the area.
 
-
-
+The MCES Citizen-Assisted Monitoring Program (CAMP) \\ The goal of the MCES lake monitoring program is to obtain and provide information that enables cities, counties, lake associations, and watershed management districts to better manage TCMA lakes, thereby protecting and improving lake water quality.
+""")
 
 def main():
-    st.markdown(
-        """# Data Science Project
-
-    This app displays a water quality monitoring and property report in the Twin Cities Metro Area alongside a machine learning model that produces
-    predictions on the future sale value of properties in the area.
-
-    The MCES Citizen-Assisted Monitoring Program (CAMP) \\ The goal of the MCES lake monitoring program is to
-    obtain and provide information that enables cities, counties, lake associations, and watershed
-    management districts to better manage TCMA lakes, thereby protecting and improving lake
-    water quality.
-    """
-    )
+    st.write("# Lakes Water Quality Monitoring Report")
     micro_view()
     macro_view()
-    ml_model( )
+    ml_model()
 
 
 
@@ -98,6 +92,7 @@ def micro_view():
                  'type': 'ScatterplotLayer',
                  'data': new_df1,
                  }])
+        st.write("# Properties Report")
         st.subheader("Median Price of Properties at %s" % selected_lake)
         fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
         fig_bar.update_layout(
@@ -231,24 +226,30 @@ def macro_view():
     st.plotly_chart(fig)
 
 def ml_model():
-    st.markdown("""## Predictions
+    st.markdown("""# Predictions
 
-    This portion of the app takes in a json file that have been preprocessed, sends it to an machine model to obtain <b>Median sale value</b> predictions for a property.
+    This portion of the app takes in a json file that have been preprocessed.
+    The file is sent to a machine learning model.
+    The model then returns the median sale value prediction of a property.
     """)
     st.subheader("Upload json test data here:")
     uploaded_file = st.file_uploader("Choose a json file", type="json")
     if uploaded_file is not None:
         test_data = pd.read_json(uploaded_file)
-        st.write(test_data)
-        test_data_json = test_data.to_dict()
-        st.write(test_data_json)
+        test_data_dict = test_data.to_dict(orient='records')
+        test_json = json.dumps(test_data_dict)
+
     if st.button('Run'):
-        st.info('Prediction has started.')
+        st.info('Prediction has started, with uploaded file.')
+        my_bar = st.progress(0)
+        for percent_complete in range(100):
+            my_bar.progress(percent_complete + 1)
         url = 'https://guess-model.herokuapp.com/v1/predict/lakePrediction'
-        x = requests.post(url, json = test_data_json)
-        st.write(x.text)
 
-
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        x = requests.post(url, data = test_json, headers = headers)
+        Model_Info = pd.DataFrame.from_dict(x.json())
+        st.write("The predictions from the test data gives us a median sale value of  $%s." % Model_Info['predictions'].values)
 
 if __name__ == "__main__":
     main()
