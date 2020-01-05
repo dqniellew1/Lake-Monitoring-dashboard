@@ -29,7 +29,7 @@ def main():
 
 
 
-data_path = "/Users/bg8485bw/Desktop/Streamlit_lakes/Data/lake_data_for_viz.csv"
+data_path = "/Data/lake_data_for_viz.csv"
 
 @st.cache
 def load_data():
