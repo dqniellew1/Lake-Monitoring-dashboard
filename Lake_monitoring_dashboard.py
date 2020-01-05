@@ -4,6 +4,7 @@ import numpy as np
 import chart_studio.plotly as py
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import requests
 
 
 
@@ -68,12 +69,12 @@ def micro_view():
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
 
-        st.subheader("Use the slider to check the seasonal grade:")
+        st.subheader("Use the slider to check the seasonal grade for %s:" % selected_lake)
         year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
         if year:
             grade_df = data[['Year','LAKE_NAME_y','seasonal.grade']]
             grade_df = grade_df[(grade_df['Year'] == year) & (grade_df['LAKE_NAME_y'] == selected_lake)]
-            st.text("The seasonal grade for %s is %s" % (selected_lake, grade_df['seasonal.grade'].values))
+            st.text("The %s seasonal grade for %s is %s" % (year, selected_lake, grade_df['seasonal.grade'].values))
 
         # Plot map
         new_df1 = new_df[['latitude', 'longitude']]
@@ -230,7 +231,22 @@ def macro_view():
     st.plotly_chart(fig)
 
 def ml_model():
-    st.text("ML here")
+    st.markdown("""## Predictions
+
+    This portion of the app takes in a json file that have been preprocessed, sends it to an machine model to obtain <b>Median sale value</b> predictions for a property.
+    """)
+    st.subheader("Upload json test data here:")
+    uploaded_file = st.file_uploader("Choose a json file", type="json")
+    if uploaded_file is not None:
+        test_data = pd.read_json(uploaded_file)
+        test_data_json = test_data.to_json()
+    if st.button('Run'):
+        st.info('Prediction has started.')
+        url = 'https://guess-model.herokuapp.com/v1/predict/lakePrediction'
+        x = requests.post(url, data = test_data_json)
+        st.write(x.text)
+
+
 
 if __name__ == "__main__":
     main()
