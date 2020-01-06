@@ -20,9 +20,6 @@ def main():
     elif page == "Predictions":
         ml_model()
 
-
-
-
 data_path = "./Data/lake_data_for_viz.csv"
 
 @st.cache
@@ -98,26 +95,21 @@ def micro_view():
                  'type': 'ScatterplotLayer',
                  'data': new_df1,
                  }])
+        st.write("# Properties Report")
+        st.subheader("Median Price of Properties at %s" % selected_lake)
+        fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
+        fig_bar.update_layout(
+            title_text="<b>Median Price of Properties of %s </b>" % selected_lake
+            )
+        fig_bar.update_xaxes(title_text="<b>Year</b>")
+        # Set y-axes titles
+        fig_bar.update_yaxes(title_text="<b>Price</b>")
+
+        st.plotly_chart(fig_bar)
 
 
 
 def macro_view():
-    selected_lake = st.selectbox('Select the lake you would like to examine:', data["LAKE_NAME_x"].unique())
-    if selected_lake:
-        new_df = data[data["LAKE_NAME_x"] == selected_lake].set_index("Year")
-        new_df = new_df.sort_index(axis = 0)
-    st.write("# Properties Report")
-    st.subheader("Median Price of Properties at %s" % selected_lake)
-    fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
-    fig_bar.update_layout(
-        title_text="<b>Median Price of Properties of %s </b>" % selected_lake
-        )
-    fig_bar.update_xaxes(title_text="<b>Year</b>")
-    # Set y-axes titles
-    fig_bar.update_yaxes(title_text="<b>Price</b>")
-
-    st.plotly_chart(fig_bar)
-
     st.subheader("Average number of properties around major watersheds")
     viz_df1 = data.pivot_table(values='count(PIN)',index='Year',columns='MAJOR_WATERSHED_y').cumsum().reset_index()
 
