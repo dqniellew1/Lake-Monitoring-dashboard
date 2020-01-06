@@ -9,16 +9,20 @@ import time
 
 
 def main():
-    page = st.sidebar.selectbox("Choose a page", ["About", "Lakes Report", "Properties Report", "Predictions"])
-    if page == "About":
+    page = st.sidebar.selectbox("Navigate the app", ["Information", "Reports", "Predictions"])
+    if page == "Information":
         about()
-    elif page == "Lakes Report":
-        st.write("# Lakes Water Quality Monitoring Report")
+    elif page == "Reports":
+        st.write("# Lakes Water Quality Monitoring Report ⛵️")
         micro_view()
-    elif page == "Properties Report":
         macro_view()
     elif page == "Predictions":
         ml_model()
+    st.sidebar.title(" 🌸 About")
+    st.sidebar.info(
+        "\nThis app is maintained by [Daniel]("
+        "https://www.linkedin.com/in/daniel-lew-1a358bc/) &  [Kapil] (https://www.google.com).\n\n"
+    )
 
 data_path = "./Data/lake_data_for_viz.csv"
 
@@ -32,9 +36,18 @@ def about():
     st.markdown("# Lakes Monitoring Dashboard")
     st.markdown(""" This app displays a water quality monitoring and property report in the Twin Cities Metro Area alongside a machine learning model that produces predictions on the future median sale value of properties in the area.
 
-    The MCES Citizen-Assisted Monitoring Program (CAMP) \\ The goal of the MCES lake monitoring program is to obtain and provide information that enables cities, counties, lake associations, and watershed management districts to better manage TCMA lakes, thereby protecting and improving lake water quality.
     """)
-    st.markdown("This project is brought to you by Daniel Lew and Kapil Khanal.")
+    st.markdown("**🐳 Data Sources 🐳**")
+    st.markdown("This gives a general overview of the data sources "
+            "used in this project.")
+    st.markdown("* Parcel data")
+    st.markdown("This dataset is a compilation of tax parcel polygon and point layers assembled into a common coordinate systems from Twin Cities, Minnesota metropolitan area counties.")
+    st.markdown("* Lake monitoring data")
+    st.markdown("This dataset contains lake quality data.")
+    st.markdown("* MCES data")
+    st.markdown("The MCES Citizen-Assisted Monitoring Program (CAMP) - ")
+    st.markdown("The goal of the MCES lake monitoring program is to obtain and provide information that enables cities, counties, lake associations, and watershed management districts to better manage TCMA lakes, thereby protecting and improving lake water quality.")
+    st.markdown("**🌏 Project Roadmap 🌏**")
 
 def micro_view():
     selected_lake = st.selectbox('Select the lake you would like to examine:', data["LAKE_NAME_x"].unique())
@@ -75,27 +88,27 @@ def micro_view():
 
         # Plot map
         new_df1 = new_df[['latitude', 'longitude']]
-        st.subheader('Geographic data at %s'% selected_lake)
+        st.subheader(' Geographic data at %s 🌊'% selected_lake)
         st.deck_gl_chart(
             viewport={
-                'latitude': 44.9773,
-                'longitude': -93.2655,
-                'zoom': 10,
+                'latitude': 44.9799700,
+                'longitude': -93.2638400,
+                'zoom': 8,
                 'pitch': 50,
              },
              layers=[{
-                'type': 'HexagonLayer',
+                'type':'PointCloudLayer',
                 'data': new_df1,
-                'radius': 200,
-                'elevationScale': 10,
-                'elevationRange': [1000, 1000],
-                'pickable': True,
-                'extruded': True,
+                'radius': 1500,
+                'elevationScale': 80,
+                'elevationRange': [800, 10000],
+                'pickable': False,
+                'extruded': False,
          },     {
                  'type': 'ScatterplotLayer',
                  'data': new_df1,
                  }])
-        st.write("# Properties Report")
+        st.write("# Properties Report 🏣")
         st.subheader("Median Price of Properties at %s" % selected_lake)
         fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
         fig_bar.update_layout(
@@ -230,7 +243,7 @@ def macro_view():
     st.plotly_chart(fig)
 
 def ml_model():
-    st.markdown("""# Predictions
+    st.markdown("""# Predictions 📈
 
     This portion of the app takes in a json file that have been preprocessed.
     The file is sent to a machine learning model.
