@@ -5,7 +5,7 @@ from plotly.subplots import make_subplots
 import requests
 import json
 import time
-
+from PIL import Image
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     if page == "Information":
         about()
     elif page == "Reports":
-        st.write("# Lakes Water Quality Monitoring Report ⛵️")
+        st.write("# Lakes Water Quality Monitoring and Taxation Data Report ⛵️")
         micro_view()
         macro_view()
     elif page == "Predictions":
@@ -21,7 +21,7 @@ def main():
     st.sidebar.title(" 🌸 About")
     st.sidebar.info(
         "\nThis app is maintained by [Daniel]("
-        "https://www.linkedin.com/in/daniel-lew-1a358bc/) &  [Kapil] (https://www.google.com).\n\n"
+        "https://www.linkedin.com/in/daniel-lew-1a358bc/) &  [Kapil] (http://kapil.rbind.io/).\n\n"
     )
 
 data_path = "./Data/lake_data_for_viz.csv"
@@ -33,19 +33,23 @@ def load_data():
 data = load_data()
 
 def about():
+    
     st.markdown("# Lakes Monitoring Dashboard")
     st.markdown(""" This app displays a water quality monitoring and property report in the Twin Cities Metro Area alongside a machine learning model that produces predictions on the future median sale value of properties in the area.
 
     """)
+    image = Image.open('./media/lake.png')
+    st.image(image, caption='',use_column_width=True)
     st.markdown("**🐳 Data Sources 🐳**")
     st.markdown("This gives a general overview of the data sources "
             "used in this project.")
     st.markdown("* Parcel data")
     st.markdown("This dataset is a compilation of tax parcel polygon and point layers assembled into a common coordinate systems from Twin Cities, Minnesota metropolitan area counties.")
     st.markdown("* Lake monitoring data")
-    st.markdown("This dataset contains lake quality data.")
+    st.markdown("This dataset contains lake quality data merged with Parcel Data")
     st.markdown("* MCES data")
-    st.markdown("The MCES Citizen-Assisted Monitoring Program (CAMP) - ")
+    st.markdown("[ The MCES Citizen-Assisted-Monitoring-Program(CAMP)](https://metrocouncil.org/Wastewater-Water/Services/Water-Quality-Management/Lake-Monitoring-Analysis/Citizen-Assisted-Monitoring-Program.aspx)")
+    #st.markdown("The MCES Citizen-Assisted Monitoring Program (CAMP) - ")
     st.markdown("The goal of the MCES lake monitoring program is to obtain and provide information that enables cities, counties, lake associations, and watershed management districts to better manage TCMA lakes, thereby protecting and improving lake water quality.")
     st.markdown("**🌏 Project Roadmap 🌏**")
 
@@ -249,12 +253,22 @@ def ml_model():
     The file is sent to a machine learning model.
     The model then returns the median sale value prediction of a property.
     """)
-    st.subheader("Upload json test data here:")
-    uploaded_file = st.file_uploader("Choose a json file", type="json")
+    st.subheader("Upload test data here either (JSON or CSV):")
+    st.markdown('')
+    uploaded_file = st.file_uploader("Choose a json file")
+    
+
+    # def check_format(filedata):
+    #     try:
+    #         json.loads(filedata)
+    #         return 'JSON'
+    #     except ValueError:
+    #         return 'CSV'
     if uploaded_file is not None:
         test_data = pd.read_json(uploaded_file)
         test_data_dict = test_data.to_dict(orient='records')
         test_json = json.dumps(test_data_dict)
+
 
     if st.button('Run'):
         st.info('Prediction has started, with uploaded file.')
