@@ -46,7 +46,7 @@ def about():
     st.markdown("* Parcel data")
     st.markdown("This dataset is a compilation of tax parcel polygon and point layers assembled into a common coordinate systems from Twin Cities, Minnesota metropolitan area counties.")
     st.markdown("* Lake monitoring data")
-    st.markdown("This dataset contains lake quality data merged with Parcel Data")
+    st.markdown("This dataset contains lake quality in each lake and year.")
     st.markdown("* MCES data")
     st.markdown("[ The MCES Citizen-Assisted-Monitoring-Program(CAMP)](https://metrocouncil.org/Wastewater-Water/Services/Water-Quality-Management/Lake-Monitoring-Analysis/Citizen-Assisted-Monitoring-Program.aspx)")
     #st.markdown("The MCES Citizen-Assisted Monitoring Program (CAMP) - ")
@@ -83,7 +83,7 @@ def micro_view():
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
 
-        st.subheader("Below is the seasonal grade for %s: for all year" % selected_lake)
+        st.subheader("Below is the seasonal grade for %s:" % selected_lake)
         #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
         #if year:
         grade_df = new_df[['seasonal.grade']]
@@ -91,53 +91,52 @@ def micro_view():
         grade_df["num_grade"] = grade_df["seasonal.grade"].replace(replace_nums)
         grade_df['Y'] = grade_df.apply(lambda x: 0.5, axis=1)
         layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',width = 900,height = 400,
-        yaxis = dict(range = [0,1.5],showticklabels=False,showgrid=False),xaxis = dict(
-        tickmode = 'linear',
-        tick0 = 2003,
-        dtick = 1,showgrid=False
-    ))
+                           plot_bgcolor='rgba(0,0,0,0)',
+                           width = 900,
+                           height = 300,
+                           yaxis = dict(range = [0,1],
+                                        showticklabels=False,
+                                        showgrid=False),
+                           xaxis = dict(tickmode = 'linear',
+                                        tick0 = grade_df.index.min(),
+                                        dtick = 1,
+                                        showgrid=False
+                                       ))
 
-        colorsIdx = {'A': 'rgb(17,84,23)', 'B': 'rgb(21,159,34)','F':'rgb(255,44,44)','C':'rgb(143,179,24)',
-        'D':'rgb(238,144,21)','E':'rgb(238,79,21)'}
-        textIdx = {'A':'A','B':'B','C':'C','D':'D','E':'E','F':'F'}
+        colorsIdx = {'A': 'rgb(17,84,23)', 
+                     'B': 'rgb(21,159,34)',
+                     'C': 'rgb(143,179,24)',
+                     'D': 'rgb(238,144,21)',
+                     'E': 'rgb(238,79,21)',
+                     'F': 'rgb(255,44,44)'}
+        textIdx = {'A':'A',
+                   'B':'B',
+                   'C':'C',
+                   'D':'D',
+                   'E':'E',
+                   'F':'F'}
+        
         cols = grade_df['seasonal.grade'].map(colorsIdx)
         texts = grade_df['seasonal.grade'].map(textIdx)
 
-        
-
         fig2 = go.Figure(layout = layout)
         fig2.add_trace(
-            go.Scatter(
-            mode='markers+text',
-            x=grade_df.index,
-            y=grade_df.Y,
-            hoverinfo='skip',
-            marker=dict(
-            size=45,
-            color = cols),
-            showlegend=False,
-            text = texts,
-            textposition="bottom center",
-            textfont=dict(
-                family="sans serif",
-                size=23,
-                color="purple"
-    )
-        )
-
-    )
-
-
-        
-
+            go.Scatter(mode='markers+text',
+                       x=grade_df.index,
+                       y=grade_df.Y,
+                       hoverinfo='skip',
+                       marker=dict(
+                           size=45,
+                           color = cols),
+                       showlegend=False,
+                       text = texts,
+                       textposition="bottom center",
+                       textfont=dict(family="sans serif",
+                                     size=23,
+                                     color="purple")))
         st.plotly_chart(fig2)
         
-
-        
-
-
-        st.text("The  seasonal grade for %s is %s" % (selected_lake, grade_df['seasonal.grade'].values))
+        #st.text("The  seasonal grade for %s is %s" % (selected_lake, grade_df['seasonal.grade'].values))
 
         # Plot map
         new_df1 = new_df[['latitude', 'longitude']]
@@ -304,7 +303,7 @@ def ml_model():
     """)
     st.subheader("Upload test data here either (JSON or CSV):")
     st.markdown('')
-    uploaded_file = st.file_uploader("Choose a json file")
+    uploaded_file = st.file_uploader("Choose a file")
     
 
     # def check_format(filedata):
