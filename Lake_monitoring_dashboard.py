@@ -33,10 +33,9 @@ def load_data():
 data = load_data()
 
 def about():
-    
+
     st.markdown("# Lakes Monitoring Dashboard")
     st.markdown(""" This app displays a water quality monitoring and property report in the Twin Cities Metro Area alongside a machine learning model that produces predictions on the future median sale value of properties in the area.
-
     """)
     image = Image.open('./media/lake.png')
     st.image(image, caption='',use_column_width=True)
@@ -52,6 +51,9 @@ def about():
     #st.markdown("The MCES Citizen-Assisted Monitoring Program (CAMP) - ")
     st.markdown("The goal of the MCES lake monitoring program is to obtain and provide information that enables cities, counties, lake associations, and watershed management districts to better manage TCMA lakes, thereby protecting and improving lake water quality.")
     st.markdown("**🌏 Project Roadmap 🌏**")
+    image2 = Image.open('./media/roadmap.png')
+    st.image(image2, caption='',use_column_width=True)
+
 
 def micro_view():
     selected_lake = st.selectbox('Select the lake you would like to examine:', data["LAKE_NAME_x"].unique())
@@ -82,6 +84,11 @@ def micro_view():
         fig.update_yaxes(title_text="<b>Phosphorus Levels</b>", secondary_y=False)
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
+        st.info("""
+        *Secchi Depth* measures water transparency in bodies of water. The higher the better.
+
+        *Phosphorus* is a key nutrient measure that affects plant and algal growth in lakes . The lower the better.""")
+
 
         st.subheader("Below is the seasonal grade for %s:" % selected_lake)
         #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
@@ -103,7 +110,7 @@ def micro_view():
                                         showgrid=False
                                        ))
 
-        colorsIdx = {'A': 'rgb(17,84,23)', 
+        colorsIdx = {'A': 'rgb(17,84,23)',
                      'B': 'rgb(21,159,34)',
                      'C': 'rgb(143,179,24)',
                      'D': 'rgb(238,144,21)',
@@ -115,7 +122,7 @@ def micro_view():
                    'D':'D',
                    'E':'E',
                    'F':'F'}
-        
+
         cols = grade_df['seasonal.grade'].map(colorsIdx)
         texts = grade_df['seasonal.grade'].map(textIdx)
 
@@ -124,7 +131,8 @@ def micro_view():
             go.Scatter(mode='markers+text',
                        x=grade_df.index,
                        y=grade_df.Y,
-                       hoverinfo='skip',
+                       hovertemplate = "Year: %{x}",
+
                        marker=dict(
                            size=45,
                            color = cols),
@@ -135,7 +143,7 @@ def micro_view():
                                      size=23,
                                      color="purple")))
         st.plotly_chart(fig2)
-        
+
         #st.text("The  seasonal grade for %s is %s" % (selected_lake, grade_df['seasonal.grade'].values))
 
         # Plot map
@@ -162,7 +170,9 @@ def micro_view():
                  }])
         st.write("# Properties Report 🏣")
         st.subheader("Median Price of Properties at %s" % selected_lake)
-        fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
+        fig_bar = go.Figure([go.Bar(x=new_df.index,
+        y=new_df['Median(SALE_VALUE)'],
+        hovertemplate="Year: %{x} <br>Median Sale Value: %{y}</br>")])
         fig_bar.update_layout(
             title_text="<b>Median Price of Properties of %s </b>" % selected_lake
             )
@@ -296,7 +306,6 @@ def macro_view():
 
 def ml_model():
     st.markdown("""# Predictions 📈
-
     This portion of the app takes in a json file that have been preprocessed.
     The file is sent to a machine learning model.
     The model then returns the median sale value prediction of a property.
@@ -304,7 +313,7 @@ def ml_model():
     st.subheader("Upload test data here either (JSON or CSV):")
     st.markdown('')
     uploaded_file = st.file_uploader("Choose a file")
-    
+
 
     # def check_format(filedata):
     #     try:
