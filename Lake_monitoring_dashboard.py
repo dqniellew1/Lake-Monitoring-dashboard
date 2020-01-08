@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import matplotlib.pyplot as plt
 import requests
 import json
 import time
@@ -83,12 +84,61 @@ def micro_view():
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
 
-        st.subheader("Use the slider to check the seasonal grade for %s:" % selected_lake)
-        year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
-        if year:
-            grade_df = data[['Year','LAKE_NAME_y','seasonal.grade']]
-            grade_df = grade_df[(grade_df['Year'] == year) & (grade_df['LAKE_NAME_y'] == selected_lake)]
-            st.text("The %s seasonal grade for %s is %s" % (year, selected_lake, grade_df['seasonal.grade'].values))
+        st.subheader("Below is the seasonal grade for %s: for all year" % selected_lake)
+        #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
+        #if year:
+        grade_df = new_df[['seasonal.grade']]
+        replace_nums = {"A": 5, "B": 4,"C":3,"D":2,"E":1,"F":0}
+        grade_df["num_grade"] = grade_df["seasonal.grade"].replace(replace_nums)
+        grade_df['Y'] = grade_df.apply(lambda x: 0.5, axis=1)
+        layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',width = 900,height = 400,
+        yaxis = dict(range = [0,1.5],showticklabels=False,showgrid=False),xaxis = dict(
+        tickmode = 'linear',
+        tick0 = 2003,
+        dtick = 1,showgrid=False
+    ))
+
+        colorsIdx = {'A': 'rgb(17,84,23)', 'B': 'rgb(21,159,34)','F':'rgb(255,44,44)','C':'rgb(143,179,24)',
+        'D':'rgb(238,144,21)','E':'rgb(238,79,21)'}
+        textIdx = {'A':'A','B':'B','C':'C','D':'D','E':'E','F':'F'}
+        cols = grade_df['seasonal.grade'].map(colorsIdx)
+        texts = grade_df['seasonal.grade'].map(textIdx)
+
+        
+
+        fig2 = go.Figure(layout = layout)
+        fig2.add_trace(
+            go.Scatter(
+            mode='markers+text',
+            x=grade_df.index,
+            y=grade_df.Y,
+            hoverinfo='skip',
+            marker=dict(
+            size=45,
+            color = cols),
+            showlegend=False,
+            text = texts,
+            textposition="bottom center",
+            textfont=dict(
+                family="sans serif",
+                size=23,
+                color="purple"
+    )
+        )
+
+    )
+
+
+        
+
+        st.plotly_chart(fig2)
+        
+
+        
+
+
+        st.text("The  seasonal grade for %s is %s" % (selected_lake, grade_df['seasonal.grade'].values))
 
         # Plot map
         new_df1 = new_df[['latitude', 'longitude']]
