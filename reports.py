@@ -264,7 +264,6 @@ def macro_view(data):
         new_dfws = new_dfws.sort_values(['Year'])
         fig_scatter = px.scatter(new_dfws,
                                  y=new_dfws.index,
-                                 opacity=0.5,
                                  x = "Number Properties",
                                  color =new_dfws.index,
                                  animation_frame="Year",
