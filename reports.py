@@ -37,7 +37,7 @@ def micro_view(data):
         st.info("""
         __**Secchi Depth**__ measures water transparency in bodies of water. Higher is better.
 
-        __**Phosphorus**__ is a key nutrient measure that affects plant and algae growth in lakes . Lower is better.""")
+        __**Phosphorus**__ is a key nutrient measure that affects plant and algae growth in lakes. Lower is better.""")
 
         st.subheader("Below are the seasonal grades for %s:" % selected_lake)
         #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
