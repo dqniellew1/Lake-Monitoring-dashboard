@@ -35,7 +35,7 @@ def micro_view(data):
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
 
-        st.subheader("Below is the seasonal grade for %s:" % selected_lake)
+        st.subheader("Below are the seasonal grades for %s:" % selected_lake)
         #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
         #if year:
         grade_df = new_df[['seasonal.grade']]
