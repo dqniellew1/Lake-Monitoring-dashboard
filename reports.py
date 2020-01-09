@@ -276,11 +276,13 @@ def macro_view(data):
                                       line=dict(width=2,
                                                 color='DarkSlateGrey')),
                           selector=dict(mode='markers'))
-        fig_scatter.update_layout(transition = {'duration': 30000,"easing": "cubic-in-out"})
+        fig_scatter.update_layout(transition = {'duration': 30000,"easing": "cubic-in-out"},
+                                  autosize=False,
+                                  width=1000,
+                                  height=600,)
         fig_scatter.update_xaxes(title="<b>Number of Properties</b>", row=1, col=2)
         fig_scatter.update_yaxes(title="<b>Seasonal Grade</b>",row=2, col=1)
         fig_scatter.update_layout(
-            autosize=True,
             title="<b>Lake Quality for each year by county</b>",
             xaxis_title="<b>Number of Properties</b>",
             yaxis_title="<b>Seasonal Grade</b>",
