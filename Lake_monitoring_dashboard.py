@@ -41,6 +41,7 @@ def about():
     st.markdown("# Lakes Monitoring Dashboard")
     st.markdown(""" This app displays a water quality monitoring and property report in the Twin Cities Metro Area alongside a machine learning model that produces predictions on the future median sale value of properties in the area.
     """)
+    st.markdown("Every graph in this dashboard is interactive.")
     image = Image.open('./media/lake.png')
     st.image(image, caption='',use_column_width=True)
     st.markdown("**🐳 Data Sources 🐳**")
