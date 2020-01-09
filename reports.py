@@ -266,7 +266,7 @@ def macro_view(data):
                                  opacity=0.5,
                                  x = "Number Properties",
                                  color =new_dfws.index,
-                                 animation_frame=sorted("Year"),
+                                 animation_frame="Year",
                                  animation_group="LAKE_NAME_x",
                                  facet_col="COUNTY",
                                  hover_name="LAKE_NAME_x",
