@@ -34,6 +34,10 @@ def micro_view(data):
         fig.update_yaxes(title_text="<b>Phosphorus Levels</b>", secondary_y=False)
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
+        st.info("""
+        __**Secchi Depth**__ measures water transparency in bodies of water. Higher is better.
+
+        __**Phosphorus**__ is a key nutrient measure that affects plant and algae growth in lakes . Lower is better.""")
 
         st.subheader("Below are the seasonal grades for %s:" % selected_lake)
         #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
@@ -55,12 +59,12 @@ def micro_view(data):
                                         showgrid=False
                                        ))
 
-        colorsIdx = {'A': 'rgb(17,84,23)',
-                     'B': 'rgb(21,159,34)',
-                     'C': 'rgb(143,179,24)',
-                     'D': 'rgb(238,144,21)',
+        colorsIdx = {'A': 'rgb(128,0,128)',
+                     'B': 'rgb(255,165,0)',
+                     'C': 'rgb(0,128,0)',
+                     'D': 'rgb(0,0,255)',
                      'E': 'rgb(238,79,21)',
-                     'F': 'rgb(255,44,44)'}
+                     'F': 'rgb(255,0,0)'}
         textIdx = {'A':'A',
                    'B':'B',
                    'C':'C',
@@ -91,39 +95,76 @@ def micro_view(data):
         # st.text("The  seasonal grade for %s is %s" % (selected_lake, grade_df['seasonal.grade'].values))
 
         # Plot map
-        new_df1 = new_df[['latitude', 'longitude']]
-        st.subheader(' Geographic data at %s 🌊'% selected_lake)
-        st.deck_gl_chart(
-                viewport={
-                    'latitude': 44.9799700,
-                    'longitude': -93.2638400,
-                    'zoom': 8,
-                    'pitch': 50,
-                 },
-                 layers=[{
-                    'type':'PointCloudLayer',
-                    'data': new_df1,
-                    'radius': 1500,
-                    'elevationScale': 80,
-                    'elevationRange': [800, 10000],
-                    'pickable': False,
-                    'extruded': False,
-             },     {
-                     'type': 'ScatterplotLayer',
-                     'data': new_df1,
-                     }])
-        
-        st.write("# Properties Report 🏣")
-        st.subheader("Median Price of Properties at %s" % selected_lake)
-        fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
-        fig_bar.update_layout(
-                title_text="<b>Median Price of Properties of %s </b>" % selected_lake
-                )
-        fig_bar.update_xaxes(title_text="<b>Year</b>")
-            # Set y-axes titles
-        fig_bar.update_yaxes(title_text="<b>Price</b>")
+#         new_df1 = new_df[['latitude', 'longitude']]
+#         st.subheader(' Geographic data at %s 🌊'% selected_lake)
+#         st.deck_gl_chart(
+#                 viewport={
+#                     'latitude': 44.9799700,
+#                     'longitude': -93.2638400,
+#                     'zoom': 8,
+#                     'pitch': 50,
+#                  },
+#                  layers=[{
+#                     'type':'PointCloudLayer',
+#                     'data': new_df1,
+#                     'radius': 1500,
+#                     'elevationScale': 80,
+#                     'elevationRange': [800, 10000],
+#                     'pickable': False,
+#                     'extruded': False,
+#              },     {
+#                      'type': 'ScatterplotLayer',
+#                      'data': new_df1,
+#                      }])
+    selected_measure = st.selectbox('Select the measurement you would like to examine:', ("Mean Phosphorus Result","Mean Secchi Depth Result"))
+    if selected_measure == 'Mean Phosphorus Result':
+        map_df = data.sort_values(['Year'])
+        fig_map = px.density_mapbox(map_df,
+                            lat='latitude',
+                            lon='longitude',
+                            z='avg(Total_Phosphorus_RESULT)',
+                            radius=5,
+                            hover_name="LAKE_NAME_x",
+                            center=dict(lat=44.9799700, lon=-93.2638400),
+                            zoom=7.8,animation_frame= "Year",
+                            animation_group="LAKE_NAME_x",labels={"Year":"Year",
+                                                                  "avg(Total_Phosphorus_RESULT)":"Mean Phosphorus Result",
+                                                                  "latitude":"Latitude",
+                                                                  "longitude":"Longitude"},
+                            color_continuous_scale=px.colors.cyclical.IceFire,
+                            mapbox_style="open-street-map",
+                            title="<b>%s of Lakes</b>"%selected_measure)
+        st.plotly_chart(fig_map)
+    elif selected_measure == 'Mean Secchi Depth Result':
+        map_df = data.sort_values(['Year'])
+        fig_map = px.density_mapbox(map_df,
+                            lat='latitude',
+                            lon='longitude',
+                            z='avg(Secchi_Depth_RESULT)',
+                            radius=5,
+                            hover_name="LAKE_NAME_x",
+                            center=dict(lat=44.9799700, lon=-93.2638400),
+                            zoom=7.8,animation_frame= "Year",
+                            animation_group="LAKE_NAME_x",labels={"Year":"Year",
+                                                                  "avg(Secchi_Depth_RESULT)":"Mean Secchi Depth Result",
+                                                                  "latitude":"Latitude",
+                                                                  "longitude":"Longitude"},
+                            color_continuous_scale=px.colors.cyclical.IceFire,
+                            mapbox_style="open-street-map",
+                            title="<b>%s of Lakes</b>"%selected_measure)
+        st.plotly_chart(fig_map)
 
-        st.plotly_chart(fig_bar)
+    st.write("# Properties Report 🏣")
+    st.subheader("Median Price of Properties at %s" % selected_lake)
+    fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
+    fig_bar.update_layout(
+            title_text="<b>Median Price of Properties of %s </b>" % selected_lake
+            )
+    fig_bar.update_xaxes(title_text="<b>Year</b>")
+        # Set y-axes titles
+    fig_bar.update_yaxes(title_text="<b>Price</b>")
+
+    st.plotly_chart(fig_bar)
 
 def macro_view(data):
     st.subheader("Average number of properties around major watersheds")
