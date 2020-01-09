@@ -113,7 +113,7 @@ def micro_view(data):
                      'data': new_df1,
                      }])
 
-def macro_view():
+def macro_view(data):
     st.subheader("Average number of properties around major watersheds")
     viz_df1 = data.pivot_table(values='count(PIN)',index='Year',columns='MAJOR_WATERSHED_y').cumsum().reset_index()
 
