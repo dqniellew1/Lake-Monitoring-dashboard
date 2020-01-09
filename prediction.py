@@ -1,5 +1,4 @@
-
-
+import streamlit as st
 import requests
 import json
 import pandas as pd
@@ -12,7 +11,7 @@ def ml_model():
     """)
     st.subheader("Upload test data here either (JSON or CSV):")
     st.markdown('')
-    uploaded_file = st.file_uploader("Choose a json file")
+    uploaded_file = st.file_uploader("Choose a file:")
     
 
     # def check_format(filedata):
@@ -28,7 +27,7 @@ def ml_model():
 
 
     if st.button('Run'):
-        st.info('Prediction has started, with uploaded file.')
+        st.info('Prediction has started, with the uploaded file.')
         my_bar = st.progress(0)
         for percent_complete in range(100):
             my_bar.progress(percent_complete + 1)
