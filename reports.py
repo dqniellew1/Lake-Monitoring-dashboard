@@ -35,7 +35,7 @@ def micro_view(data):
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
 
-        st.subheader("Below is the seasonal grade for %s: for all year" % selected_lake)
+        st.subheader("Below is the seasonal grade for %s:" % selected_lake)
         #year = st.slider("Selected year",min_value=2004, max_value=2014, step=1)
         #if year:
         grade_df = new_df[['seasonal.grade']]
@@ -245,7 +245,7 @@ def macro_view(data):
                     ))
     st.plotly_chart(fig)
 
-    selected_ws = st.selectbox('Select the watershed you would like to examine:', data["MAJOR_WATERSHED_y"].unique())
+    selected_ws = st.selectbox('Select the watershed that you would like to examine:', data["MAJOR_WATERSHED_y"].unique())
     st.subheader("Below are the lakes in the {} watershed for each year".format(selected_ws))
 
         # if selected_ws:
@@ -280,6 +280,7 @@ def macro_view(data):
         fig_scatter.update_xaxes(title="<b>Number of Properties</b>", row=1, col=2)
         fig_scatter.update_yaxes(title="<b>Seasonal Grade</b>",row=2, col=1)
         fig_scatter.update_layout(
+            autosize=True,
             title="<b>Lake Quality for each year by county</b>",
             xaxis_title="<b>Number of Properties</b>",
             yaxis_title="<b>Seasonal Grade</b>",
