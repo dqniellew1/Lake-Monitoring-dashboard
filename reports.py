@@ -112,6 +112,18 @@ def micro_view(data):
                      'type': 'ScatterplotLayer',
                      'data': new_df1,
                      }])
+        
+        st.write("# Properties Report 🏣")
+        st.subheader("Median Price of Properties at %s" % selected_lake)
+        fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
+        fig_bar.update_layout(
+                title_text="<b>Median Price of Properties of %s </b>" % selected_lake
+                )
+        fig_bar.update_xaxes(title_text="<b>Year</b>")
+            # Set y-axes titles
+        fig_bar.update_yaxes(title_text="<b>Price</b>")
+
+        st.plotly_chart(fig_bar)
 
 def macro_view(data):
     st.subheader("Average number of properties around major watersheds")
@@ -234,7 +246,7 @@ def macro_view(data):
     st.plotly_chart(fig)
 
     selected_ws = st.selectbox('Select the watershed you would like to examine:', data["MAJOR_WATERSHED_y"].unique())
-    st.subheader("Below are the lakes in {} watershed for each year".format(selected_ws))
+    st.subheader("Below are the lakes in the {} watershed for each year".format(selected_ws))
 
         # if selected_ws:
         #     new_dfws = data[data["MAJOR_WATERSHED_y"] == selected_ws].set_index("seasonal.grade")
@@ -249,20 +261,21 @@ def macro_view(data):
     if selected_ws:
         new_dfws = data[data["MAJOR_WATERSHED_y"] == selected_ws].set_index("seasonal.grade")
         new_dfws = new_dfws.sort_index(axis=0)
-        fig_scatter = px.scatter(new_dfws,y=new_dfws.index,
-        opacity=0.5,
-        x = "Number Properties",
-        color =new_dfws.index ,
-        animation_frame="Year",
-        animation_group="LAKE_NAME_x",
-        facet_col="COUNTY",
-        hover_name="LAKE_NAME_x",
-        facet_col_wrap=2)
+        fig_scatter = px.scatter(new_dfws,
+                                 y=new_dfws.index,
+                                 opacity=0.5,
+                                 x = "Number Properties",
+                                 color =new_dfws.index,
+                                 animation_frame=sorted("Year"),
+                                 animation_group="LAKE_NAME_x",
+                                 facet_col="COUNTY",
+                                 hover_name="LAKE_NAME_x",
+                                 facet_col_wrap=2)
         
         fig_scatter.update_traces(marker=dict(size=14,
-        line=dict(width=2,
-        color='DarkSlateGrey')),
-                  selector=dict(mode='markers'))
+                                              line=dict(width=2,
+                                                        color='DarkSlateGrey')),
+                                  selector=dict(mode='markers'))
         fig_scatter.update_layout(transition = {'duration': 8000})
         fig_scatter.update_xaxes(title_text='')
         fig_scatter.update_layout(
@@ -270,21 +283,11 @@ def macro_view(data):
             xaxis_title="Number of Properties",
             yaxis_title="Seasonal Grade",
             font=dict(
-        family="Courier New, monospace",
-        size=14,
-        color="#7f7f7f"
-    ))
+                family="Courier New, monospace",
+                size=14,
+                color="#7f7f7f"))
+        
     st.plotly_chart(fig_scatter)
 
-    st.write("# Properties Report 🏣")
-    st.subheader("Median Price of Properties at %s" % selected_lake)
-    fig_bar = go.Figure([go.Bar(x=new_df.index, y=new_df['Median(SALE_VALUE)'])])
-    fig_bar.update_layout(
-            title_text="<b>Median Price of Properties of %s </b>" % selected_lake
-            )
-    fig_bar.update_xaxes(title_text="<b>Year</b>")
-        # Set y-axes titles
-    fig_bar.update_yaxes(title_text="<b>Price</b>")
-
-    st.plotly_chart(fig_bar)
+    
 
