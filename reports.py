@@ -6,7 +6,7 @@ import time
 import streamlit as st
 
 def micro_view(data):
-    selected_lake = st.selectbox('Select the lake you would like to examine:', data["LAKE_NAME_x"].unique())
+    selected_lake = st.selectbox('Select a lake that you would like to examine:', data["LAKE_NAME_x"].unique())
     if selected_lake:
         new_df = data[data["LAKE_NAME_x"] == selected_lake].set_index("Year")
         new_df = new_df.sort_index(axis = 0)
