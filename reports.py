@@ -261,6 +261,7 @@ def macro_view(data):
     if selected_ws:
         new_dfws = data[data["MAJOR_WATERSHED_y"] == selected_ws].set_index("seasonal.grade")
         new_dfws = new_dfws.sort_index(axis=0)
+        new_dfws = new_dfws.sort_values(['Year'])
         fig_scatter = px.scatter(new_dfws,
                                  y=new_dfws.index,
                                  opacity=0.5,
@@ -273,19 +274,20 @@ def macro_view(data):
                                  facet_col_wrap=2)
         
         fig_scatter.update_traces(marker=dict(size=14,
-                                              line=dict(width=2,
-                                                        color='DarkSlateGrey')),
-                                  selector=dict(mode='markers'))
-        fig_scatter.update_layout(transition = {'duration': 8000})
-        fig_scatter.update_xaxes(title_text='')
+                                      line=dict(width=2,
+                                                color='DarkSlateGrey')),
+                          selector=dict(mode='markers'))
+        fig_scatter.update_layout(transition = {'duration': 30000,"easing": "cubic-in-out"})
+        fig_scatter.update_xaxes(title="<b>Number of Properties</b>", row=1, col=2)
+        fig_scatter.update_yaxes(title="<b>Seasonal Grade</b>",row=2, col=1)
         fig_scatter.update_layout(
-            title="Lake Quality for each year countywise",
-            xaxis_title="Number of Properties",
-            yaxis_title="Seasonal Grade",
-            font=dict(
-                family="Courier New, monospace",
-                size=14,
-                color="#7f7f7f"))
+            title="<b>Lake Quality for each year by county</b>",
+            xaxis_title="<b>Number of Properties</b>",
+            yaxis_title="<b>Seasonal Grade</b>",
+            font=dict(family="Courier New, monospace",
+                      size=14,
+                      color="#7f7f7f"
+            ))
         
     st.plotly_chart(fig_scatter)
 
