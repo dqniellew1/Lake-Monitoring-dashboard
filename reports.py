@@ -35,7 +35,7 @@ def micro_view(data):
         fig.update_yaxes(title_text="<b>Secchi Depth Levels</b>", secondary_y=True)
         st.plotly_chart(fig)
         st.info("""
-        __**Secchi Depth**__ measures water transparency in bodies of water. Higher is better.
+        __**Secchi Depth**__ measures water transparency in a body of water. Higher is better.
 
         __**Phosphorus**__ is a key nutrient measure that affects plant and algae growth in lakes. Lower is better.""")
 
