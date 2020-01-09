@@ -5,7 +5,7 @@ import pandas as pd
 def ml_model():
     st.markdown("""# Predictions 📈
 
-    This portion of the app takes in a json file that have been preprocessed.
+    This portion of the app takes in a file that has been preprocessed.
     The file is sent to a machine learning model.
     The model then returns the median sale value prediction of a property.
     """)
