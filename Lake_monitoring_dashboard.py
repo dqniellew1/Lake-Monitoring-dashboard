@@ -17,7 +17,7 @@ def main():
     if page == "Information":
         about()
     elif page == "Reports":
-        st.write("# Lakes Water Quality Monitoring and Taxation Data Report ⛵️")
+        st.write("# Lakes Water Quality Monitoring and Properties Data Report ⛵️")
         rep.micro_view(data)
         rep.macro_view(data)
     elif page == "Predictions":
